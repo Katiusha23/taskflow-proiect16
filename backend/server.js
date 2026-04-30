@@ -20,10 +20,15 @@ const app = express();
 
 // Permite cereri cross-origin de la frontend (dev si productie)
 app.use(cors({
-  origin: [
-    "http://localhost:5173",
-    process.env.FRONTEND_URL || "http://localhost:5173",
-  ],
+  origin: (origin, callback) => {
+    // Permite localhost (dev) si orice domeniu Vercel
+    const allowed = !origin
+      || origin.startsWith("http://localhost")
+      || origin.endsWith(".vercel.app")
+      || origin === process.env.FRONTEND_URL;
+    callback(null, allowed);
+  },
+  credentials: true,
 }));
 
 app.use(express.json());
