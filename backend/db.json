@@ -1,0 +1,25 @@
+{
+  "users": [
+    {
+      "id": "bf1cc4dd-02b2-451d-983e-97eef353c314",
+      "username": "Ecaterina",
+      "email": "ecaterina_melnic@yahoo.com",
+      "password": "$2a$10$CYkCNkqkk3zHnWSEA7zJZ.FYYO4f9XrYdc14ePuiSCEtzrdgbIm/y",
+      "createdAt": "2026-04-30T12:23:03.328Z"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "1dde64ca-42bf-401d-88ec-61f402016206",
+      "userId": "bf1cc4dd-02b2-451d-983e-97eef353c314",
+      "title": "proiect Tehnologii Web",
+      "description": "tema 16",
+      "category": "work",
+      "priority": "high",
+      "dueDate": "2026-05-05",
+      "completed": false,
+      "order": 0,
+      "createdAt": "2026-04-30T12:23:38.340Z"
+    }
+  ]
+}
