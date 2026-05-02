@@ -1,3 +1,12 @@
+/**
+ * @component FilterBar
+ * @description Bara de filtrare si sortare a sarcinilor.
+ * Suporta filtrare dupa: categorie, prioritate, status, data limita.
+ * Suporta sortare dupa: ordine manuala, data limita, prioritate.
+ *
+ * Autor: Proiect 16 – Tehnologii Web
+ */
+
 export const CATEGORIES = [
   { value: "", label: "Toate categoriile" },
   { value: "work", label: "Munca" },
@@ -32,7 +41,7 @@ export default function FilterBar({ filters, onChange }) {
   }
 
   function reset() {
-    onChange({ category: "", priority: "", completed: "", sort: "" });
+    onChange({ category: "", priority: "", completed: "", sort: "", date: "" });
   }
 
   const isActive = Object.values(filters).some((v) => v !== "");
@@ -64,6 +73,21 @@ export default function FilterBar({ filters, onChange }) {
           options={SORTS}
           onChange={(v) => set("sort", v)}
         />
+
+        {/* Filtru calendar — afiseaza sarcinile cu data limita selectata */}
+        <div className="flex flex-col gap-1">
+          <label htmlFor="filter-date" className="text-xs font-medium text-slate-500">
+            Data limita
+          </label>
+          <input
+            id="filter-date"
+            type="date"
+            value={filters.date || ""}
+            onChange={(e) => set("date", e.target.value)}
+            className="border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 bg-white"
+          />
+        </div>
+
         {isActive && (
           <button
             onClick={reset}
@@ -81,7 +105,9 @@ function Select({ label, value, options, onChange }) {
   const id = `filter-${label.toLowerCase().replace(/\s+/g, "-")}`;
   return (
     <div className="flex flex-col gap-1 min-w-[140px]">
-      <label htmlFor={id} className="text-xs font-medium text-slate-500">{label}</label>
+      <label htmlFor={id} className="text-xs font-medium text-slate-500">
+        {label}
+      </label>
       <select
         id={id}
         value={value}

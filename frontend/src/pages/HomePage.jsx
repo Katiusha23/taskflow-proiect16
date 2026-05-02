@@ -4,10 +4,13 @@ import Navbar from "../components/Navbar";
 import FilterBar from "../components/FilterBar";
 import TaskList from "../components/TaskList";
 import TaskModal from "../components/TaskModal";
+import ProgressRing from "../components/ProgressRing";
 
 export default function HomePage() {
   const [tasks, setTasks] = useState([]);
-  const [filters, setFilters] = useState({ category: "", priority: "", completed: "", sort: "" });
+  const [filters, setFilters] = useState({
+    category: "", priority: "", completed: "", sort: "", date: "",
+  });
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingTask, setEditingTask] = useState(null);
@@ -15,11 +18,18 @@ export default function HomePage() {
   const fetchTasks = useCallback(async () => {
     setLoading(true);
     try {
+      // Trimitem doar filtrele suportate de backend (fara date — filtrat client-side)
       const params = Object.fromEntries(
-        Object.entries(filters).filter(([, v]) => v !== "")
+        Object.entries(filters).filter(([k, v]) => v !== "" && k !== "date")
       );
       const { data } = await api.get("/tasks", { params });
-      setTasks(data);
+
+      // Filtrare client-side dupa data limita selectata in calendar
+      const filtered = filters.date
+        ? data.filter((t) => t.dueDate && t.dueDate.slice(0, 10) === filters.date)
+        : data;
+
+      setTasks(filtered);
     } catch (err) {
       console.error("Eroare la preluarea sarcinilor:", err);
     } finally {
@@ -61,13 +71,12 @@ export default function HomePage() {
   }
 
   async function handleReorder(reordered) {
-    // Actualizeaza local imediat pentru UX fluid
     setTasks(reordered);
     try {
       await api.patch("/tasks/reorder", reordered.map((t, i) => ({ id: t.id, order: i })));
     } catch (err) {
       console.error("Eroare reorder:", err);
-      fetchTasks(); // refetch la eroare
+      fetchTasks();
     }
   }
 
@@ -78,8 +87,9 @@ export default function HomePage() {
     setModalOpen(false);
   }
 
-  const total = tasks.length;
-  const done = tasks.filter((t) => t.completed).length;
+  // Statistici calculate functional din array-ul de sarcini
+  const total   = tasks.length;
+  const done    = tasks.filter((t) => t.completed).length;
   const overdue = tasks.filter(
     (t) => !t.completed && t.dueDate && new Date(t.dueDate) < new Date()
   ).length;
@@ -89,11 +99,11 @@ export default function HomePage() {
       <Navbar onAdd={openAdd} />
 
       <main className="flex-1 max-w-4xl mx-auto w-full px-4 py-6">
-        {/* Statistici */}
+        {/* Carduri statistici */}
         <div className="grid grid-cols-3 gap-4 mb-6">
-          <StatCard label="Total sarcini" value={total} color="indigo" />
-          <StatCard label="Finalizate" value={done} color="green" />
-          <StatCard label="Depasite" value={overdue} color="red" />
+          <StatCard label="Total sarcini" value={total}   color="indigo" />
+          <StatCard label="Finalizate"    value={done}    color="green"  />
+          <StatCard label="Depasite"      value={overdue} color="red"    />
         </div>
 
         <FilterBar filters={filters} onChange={setFilters} />
@@ -106,7 +116,11 @@ export default function HomePage() {
           <div className="text-center py-20 text-slate-400">
             <p className="text-5xl mb-4">📋</p>
             <p className="text-lg font-medium">Nicio sarcina gasita</p>
-            <p className="text-sm mt-1">Adauga prima ta sarcina apasand butonul de mai sus</p>
+            <p className="text-sm mt-1">
+              {filters.date
+                ? "Nu exista sarcini cu aceasta data limita"
+                : "Adauga prima ta sarcina apasand butonul de mai sus"}
+            </p>
           </div>
         ) : (
           <TaskList
@@ -118,6 +132,9 @@ export default function HomePage() {
           />
         )}
       </main>
+
+      {/* Cerc progres fix in coltul din dreapta-jos */}
+      <ProgressRing total={total} completed={done} />
 
       {modalOpen && (
         <TaskModal
@@ -133,8 +150,8 @@ export default function HomePage() {
 function StatCard({ label, value, color }) {
   const colors = {
     indigo: "bg-indigo-50 text-indigo-700 border-indigo-200",
-    green: "bg-green-50 text-green-700 border-green-200",
-    red: "bg-red-50 text-red-700 border-red-200",
+    green:  "bg-green-50 text-green-700 border-green-200",
+    red:    "bg-red-50 text-red-700 border-red-200",
   };
   return (
     <div className={`rounded-xl border p-4 text-center ${colors[color]}`}>
