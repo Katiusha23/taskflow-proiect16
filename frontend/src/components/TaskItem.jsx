@@ -61,7 +61,7 @@ export default function TaskItem({ task, onToggle, onEdit, onDelete }) {
       style={style}
       className={`bg-white rounded-xl border p-4 flex gap-3 items-start group transition-shadow hover:shadow-md
         ${task.completed ? "border-slate-200 opacity-70" : "border-slate-200"}
-        ${dueDateInfo?.cls.includes("red") && !task.completed ? "border-l-4 border-l-red-400" : ""}
+        ${dueDateInfo?.cls.includes("red") && !task.completed ? "border-l-4 border-l-blue-400" : ""}
       `}
     >
       {/* Handle drag */}
