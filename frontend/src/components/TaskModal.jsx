@@ -56,10 +56,10 @@ export default function TaskModal({ task, onSaved, onClose }) {
 
   return (
     <div
-      className="fixed inset-0 bg-black/10 flex items-center justify-center z-50 px-4"
+      className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4"
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg">
+      <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg opacity-75">
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
           <h2 className="text-lg font-semibold text-slate-800">
             {isNew ? "Sarcina noua" : "Editeaza sarcina"}
