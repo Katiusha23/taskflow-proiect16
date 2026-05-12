@@ -4,7 +4,7 @@ export default function Navbar({ onAdd }) {
   const { user, logout } = useAuth();
 
   return (
-    <nav className="bg-indigo-600 text-white shadow-md">
+    <nav className="bg-indigo-900 text-white shadow-md">
       <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span className="text-xl font-bold tracking-tight">TaskFlow</span>
